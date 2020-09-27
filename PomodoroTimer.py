@@ -7,6 +7,7 @@ import pygame
 
 
 def init_timer(root):
+    """Initilaize programs settings"""
     pygame.mixer.init()
     top_frame = Frame(root)
     top_frame.pack()
@@ -29,9 +30,12 @@ class Countdown(Frame):
         self.seconds_left = 0
         self._timer_on = False
         self.pause = False
+        self.is_countdown = False
         
     def learn(self):
         """Create settings to learn"""
+        if self.is_countdown:
+            self.seconds_left = 25 * 60
         self.time_set = 25
         self.clear()
         self.create_widgets()
@@ -39,6 +43,8 @@ class Countdown(Frame):
         
     def rest(self):
         """Create settings to rest"""
+        if self.is_countdown:
+            self.seconds_left = 5 * 60
         self.time_set = 5
         self.clear()
         self.create_widgets()
@@ -55,6 +61,7 @@ class Countdown(Frame):
             pass
 
     def create_widgets(self):
+        """Create widgets for the timer"""
         style = Style()
         style.configure('T.TButton', font =('Ariel', 20, 'bold'),  height = 20, width = 20, foreground = 'black', background= "white")
         style.configure("S.TButton", font=('Times', 10, 'bold'), foreground = 'green')
@@ -67,11 +74,13 @@ class Countdown(Frame):
         self.stop = Button(self, text="Stop", style="A.TButton", command=self.stop_button)
     
     def show_widgets(self):
+        """Display widgets"""
         self.label.pack(pady=15)
         self.start.pack(pady=10, padx=5, side=RIGHT)
         self.stop.pack(padx=5, side=LEFT)
     
     def start_button(self):
+        """Control the timer using the Start button"""
         if not self.pause:
             if self.time_set == 25:
                 self.seconds_left = 60 * 25
@@ -82,15 +91,21 @@ class Countdown(Frame):
         self.countdown()
     
     def stop_button(self):
+        """Control the timer using the Stop button"""
         self.pause = True
         self._timer_on = False
+        self.is_countdown = False
     
     def stop_timer(self):
+        """Stop timer after the set time has passed"""
         if self._timer_on:
             self.after_cancel(self._timer_on)
             self._timer_on = False
+            self.is_countdown = False
 
     def countdown(self):
+        """Create a countdown and display it"""
+        self.is_countdown = True
         if not self.pause:
             self.label['text'] = self.convert_seconds_left_to_time()
             if self.seconds_left <= 5:
@@ -105,6 +120,7 @@ class Countdown(Frame):
         return datetime.timedelta(seconds=self.seconds_left)
 
     def sound(self):
+        """Create sound"""
         pygame.mixer.music.load("C:\\Users\\Shahar Avitan\\VScode\\Projects\\beep.mp3")
         pygame.mixer.music.play(loops=0)
     
@@ -112,7 +128,7 @@ class Countdown(Frame):
 if __name__ == "__main__":
     root = Tk()
     root.title("PT")
-    root.iconbitmap("C:\\Users\\Shahar Avitan\\VScode\\Projects\\Pomodoro_pomo.ico")
+    root.iconbitmap("C:\\Users\\Shahar Avitan\\VScode\\Projects\\Pomodoro\\pomo.ico")
     root.resizable(False, False)
     root.geometry("200x190")
     init_timer(root)
